@@ -1,0 +1,62 @@
+Database Trigger (All Types: Row level and Statement level triggers,
+Before and After Triggers). Write a database trigger on Library table. The
+System should keep track of the records that are being updated or deleted. 
+The
+old value of updated or deleted records should be added in Library_Audit
+table. Frame the problem statement for writing Database Triggers of all types,
+in-line with above statement. The problem statement should clearly state the
+requirements.
+SQL> CREATE TABLE lib_tab2(book_name VARCHAR2(25),status VARCHAR2(15));
+Table created.
+SQL> CREATE TABLE library_audit2(date_modified DATE, book_name 
+VARCHAR2(25),old_status VARCHAR(15),new_status VARCHAR2(15),action 
+VARCHAR2(25));
+Table created.
+SQL> INSERT INTO lib_tab2 VALUES('DARK MATTER','AVAILABLE');
+1 row created.
+SQL> INSERT INTO lib_tab2 VALUES('SILENT HILL','UNAVAILABLE');
+1 row created.
+SQL> INSERT INTO lib_tab2 VALUES('GOD OF WAR','AVAILABLE');
+1 row created.
+SQL> INSERT INTO lib_tab2 VALUES('SPIDER-MAN','UNAVAILABLE');
+1 row created.
+SQL> INSERT INTO lib_tab2 VALUES('UNCHARTED','AVAILABLE');
+1 row created.
+SQL> CREATE OR REPLACE TRIGGER trigger_3
+ 2 AFTER UPDATE OR DELETE OR INSERT ON lib_tab FOR EACH ROW
+ 3 ENABLE
+ 4 BEGIN
+ 5 IF UPDATING THEN
+ 6 dbms_output.put_line(:OLD.status);
+ 7 INSERT INTO library_audit2 VALUES 
+(SYSDATE,:OLD.book_name,:OLD.status,:NEW.status,'UPDATE');
+ 8 ELSIF INSERTING THEN
+ 9 dbms_output.put_line(:NEW.status);
+10 INSERT INTO library_audit2 VALUES 
+ 
+(SYSDATE,:NEW.book_name,:OLD.status,:NEW.status,'INSERT');
+11 ELSE
+12 dbms_output.put_line(:OLD.book_name||'deleting');
+13 INSERT INTO library_audit2 
+VALUES(SYSDATE,:OLD.book_name,:OLD.status,:NEW.status,'DELETE');
+14 END IF;
+15 END;
+16 /
+Trigger created.
+SQL> DELETE FROM lib_tab2 WHERE book_name = 'SILENT HILL';
+1 row deleted.
+SQL> UPDATE lib_tab2 SET status = 'UNAVAILABLE' WHERE book_name = 
+'UNCHARTED';
+1 row updated.
+SQL> UPDATE lib_tab2 SET status = 'PRE-ORDER' WHERE book_name = 'GOD OF 
+WAR';
+1 row updated.
+SQL> Select * from library_audit2;
+no rows selected
+SQL> Select * from lib_tab2;
+BOOK_NAME STATUS
+------------------------- ---------------
+DARK MATTER AVAILABLE
+GOD OF WAR PRE-ORDER
+SPIDER-MAN UNAVAILABLE
+UNCHARTED UNAVAILABL
