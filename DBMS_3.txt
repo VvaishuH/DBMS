@@ -1,0 +1,150 @@
+Unnamed PL/SQL code block: Use of Control structure and Exception 
+handling is mandatory. Write a PL/SQL block of code for the following 
+requirements: - Schema: 1. Borrower (Rollin, Name, DateofIssue, NameofBook, 
+Status) 2. Fine (Roll_no, Date, Amt) • Accept roll_no & name of book from user. 
+• Check the number of days (from date of issue), if days are between 15 to 30 
+then fine amount will be Rs 5per day. • If no. of days>30, per day fine will be Rs 
+50 per day & for days less than 30, Rs. 5 per day. • After submitting the book, 
+status will change from I to R. • If condition of fine is true, then details will be 
+stored into fine table. Frame the problem statement for writing PL/SQL block 
+inline with above statement. 
+SQL> CREATE TABLE borrower(roll_no NUMBER , name VARCHAR2(25), dateofissue 
+DATE, name_of_book VARCHAR2(25), status VARCHAR2(20));
+Table created.
+SQL> INSERT INTO borrower VALUES(45,'ASHUTOSH',TO_DATE('01-08-2022','DD-MMYYYY'),'HARRY POTTER','PENDING');
+1 row created.
+SQL> INSERT INTO borrower VALUES(46,'ARYAN',TO_DATE('15-08-2022','DD-MMYYYY'),'DARK MATTER','PENDING');
+1 row created.
+SQL> INSERT INTO borrower VALUES(47,'ROHAN',TO_DATE('24-08-2022','DD-MMYYYY'),'SILENT HILL','PENDING');
+1 row created.
+SQL> INSERT INTO borrower VALUES(48,'SANKET',TO_DATE('26-08-2022','DD-MMYYYY'),'GOD OF WAR','PENDING');
+1 row created.
+SQL> INSERT INTO borrower VALUES(49,'SARTHAK',TO_DATE('09-09-2022','DD-MMYYYY'),'SPIDER-MAN','PENDING');
+1 row created.
+SQL> CREATE TABLE fine (
+ 2 roll_no NUMBER,
+ 3 return_date DATE,
+ 4 fine NUMBER
+ 5 );
+Table created.
+SQL> DECLARE
+ 2 i_roll_no NUMBER;
+ 3 name_of_book VARCHAR2(25);
+ 4 no_of_days NUMBER;
+ 5 return_date DATE := TO_DATE(SYSDATE,'DD-MM-YYYY');
+ 6 temp NUMBER;
+ 7 doi DATE;
+ 8 fine NUMBER;
+ 9 BEGIN
+10 i_roll_no := &i_roll_no;
+11 name_of_book := '&nameofbook';
+12 dbms_output.put_line(return_date);
+13 SELECT to_date(borrower.dateofissue,'DD-MM-YYYY') INTO doi FROM 
+borrower WHERE 
+ borrower.roll_no = i_roll_no AND borrower.name_of_book = 
+name_of_book;
+14 no_of_days := return_date-doi;
+15 dbms_output.put_line(no_of_days);
+16 IF (no_of_days >15 AND no_of_days <=30) THEN
+17 fine := 5*no_of_days;
+18 ELSIF (no_of_days>30 ) THEN
+19 temp := no_of_days-30;
+20 fine := 150 + temp*50;
+21 END IF;
+22 dbms_output.put_line(fine);
+23 INSERT INTO fine VALUES(i_roll_no,return_date,fine);
+24 UPDATE borrower SET status = 'RETURNED' WHERE borrower.roll_no = 
+i_roll_no;
+25 END;
+26 /
+Enter value for i_roll_no: 46
+Enter value for nameofbook: DARK MATTER
+02-OCT-23
+413
+19300
+PL/SQL procedure successfully completed.
+SQL> select * from BORROWER;
+ ROLL_NO NAME DATEOFISS NAME_OF_BOOK
+---------- ------------------------- --------- -------------------------
+STATUS
+--------------------
+ 45 ASHUTOSH 01-AUG-22 HARRY POTTER
+PENDING
+ 46 ARYAN 15-AUG-22 DARK MATTER
+RETURNED
+ 47 ROHAN 24-AUG-22 SILENT HILL
+PENDING
+ ROLL_NO NAME DATEOFISS NAME_OF_BOOK
+---------- ------------------------- --------- -------------------------
+STATUS
+--------------------
+ 48 SANKET 26-AUG-22 GOD OF WAR
+PENDING
+ 49 SARTHAK 09-SEP-22 SPIDER-MAN
+PENDING
+SQL> select * from FINE;
+ ROLL_NO RETURN_DA FINE
+---------- --------- ----------
+ 46 02-OCT-23 19300
+PL/SQL-Assignment 5
+Stored Procedure and Stored Function. Write a Stored Procedure namely proc_Grade for 
+the categorization of student. If marks scored by students in examination is <=1500 and 
+marks>=990 then student will be placed in distinction category if marks scored are 
+between 989 and900 category is first class, if marks 899 and 825 category is Higher Second 
+Class. Write a PL/SQL block for using procedure created with above requirement. 
+Stud_Marks(name, total_marks) Result(Roll,Name, Class) Frame the separate problem 
+statement for writing PL/SQL Stored Procedure and function, inline with above statement. 
+The problem statement should clearly state the requirements.
+SQL> CREATE TABLE stud_marks(name VARCHAR2(25),total_marks NUMBER);
+Table created.
+SQL> CREATE TABLE result(roll_number NUMBER , name VARCHAR2(25), class 
+VARCHAR2(30));
+Table created.
+SQL> CREATE OR REPLACE FUNCTION func_1(r IN NUMBER, n IN VARCHAR2,m IN 
+NUMBER) RETURN VARCHAR2 AS
+ 2 BEGIN
+ 3 procedure_1(r,n,m);
+ 4 return 'SUCCESSFULL';
+ 5 END;
+ 6 /
+Function created.
+SQL> CREATE OR REPLACE PROCEDURE procedure_1 ( roll_no IN NUMBER, name IN 
+VARCHAR2 ,marks IN NUMBER) AS
+ 2 BEGIN
+ 3 IF (marks<=1500 and marks>=990) THEN
+ 4 DBMS_OUTPUT.PUT_LINE ('DISTINCTION');
+ 5 INSERT INTO result VALUES (roll_no,name,'DISTINCTION');
+ 6 ELSIF (marks<=989 and marks>=900) THEN
+ 7 DBMS_OUTPUT.PUT_LINE ('FIRST CLASS');
+ 8 INSERT INTO result VALUES (roll_no,name,'FIRST CLASS');
+ 9 ELSIF (marks<=899 and marKs>825) THEN
+10 DBMS_OUTPUT.PUT_LINE('HIGHER SECOND CLASS');
+11 INSERT INTO result VALUES (roll_no,name,'HIGHER SECOND CLASS');
+12 ELSE
+13 DBMS_OUTPUT.PUT_LINE ('FAIL');
+14 INSERT INTO result VALUES (roll_no,name,'FAIL');
+15
+16 END IF;
+17 INSERT INTO stud_marks VALUES (name,marks);
+18 END procedure_1;
+19 /
+Procedure created.
+SQL> DECLARE
+ 2 name_1 VARCHAR2(25);
+ 3 roll_no_1 NUMBER;
+ 4 marks_1 NUMBER;
+ 5 class VARCHAR2(25);
+ 6 BEGIN
+ 7 roll_no_1:=&roll_no_1;
+ 8 name_1:='&name_1';
+ 9 marks_1:=&marks_1;
+10 class := func_1(roll_no_1,name_1,marks_1);
+11 dbms_output.put_line(class);
+12 END;
+13 /
+Enter value for roll_no_1: 2
+Enter value for name_1: Ram
+Enter value for marks_1: 1500
+DISTINCTION
+SUCCESSFULL
+PL/SQL procedure successfully completed
