@@ -1,0 +1,346 @@
+Design and Develop MangoDB queries using CRUD operation (Use CRUD 
+operation Save Method and Logical Operator.
+In earlier versions of MongoDB, there used to be a save() function in the MongoDB 
+shell that could be used to save or update documents in a collection. However, this 
+function is now deprecated in recent versions of MongoDB (starting with version 3.2) 
+and has been removed in MongoDB 4.0 and later versions. Instead, it's 
+recommended to use the more specific insert, update, and replace operations to 
+work with documents in collections.
+test> use ass10;
+switched to db ass10
+ass10>
+ass10> db.createCollection("Library");
+{ ok: 1 }
+ass10> db.library.insert({"bid":1,"name":"C++"});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("65191fe647ff05b0c6ab5250") }
+}
+ass10> db.library.insert({"bid":2,"name":"java"});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("6519201947ff05b0c6ab5251") }
+}
+ass10> db.library.insert({"bid":3,"name":"Python"});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("6519204047ff05b0c6ab5252") }
+}
+ass10> db.library.find()
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("65191fe647ff05b0c6ab5250"), bid: 1, name: 'C++' },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ { _id: ObjectId("6519204047ff05b0c6ab5252"), bid: 3, name: 'Python' }
+]
+ass10> db.library.find().pretty();
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("65191fe647ff05b0c6ab5250"), bid: 1, name: 'C++' },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ { _id: ObjectId("6519204047ff05b0c6ab5252"), bid: 3, name: 'Python' }
+]
+ass10> db.library.update({"name":"Python"},{$set:{"name":"Python3.7"}})
+DeprecationWarning: Collection.update() is deprecated. Use updateOne, 
+updateMany, or bulkWrite.
+{
+ acknowledged: true,
+ insertedId: null,
+ matchedCount: 1,
+ modifiedCount: 1,
+ upsertedCount: 0
+}
+ass10> db.library.find()
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("65191fe647ff05b0c6ab5250"), bid: 1, name: 'C++' },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ }
+]
+ass10> db.library.remove({"bid":1});
+DeprecationWarning: Collection.remove() is deprecated. Use deleteOne, 
+deleteMany, findOneAndDelete, or bulkWrite.
+{ acknowledged: true, deletedCount: 1 }
+ass10> db.library.find()
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ }
+]
+ass10> db.library.find({"name":"java"})
+[ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' } ]
+ass10> db.library.insert({"bid":4,"name":"java","desc":"fake book"});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("6519224647ff05b0c6ab5253") }
+}
+ass10> db.library.find()
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ }
+]
+ass10> db.library.find({"name":"java"});
+[
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ }
+]
+ass10> db.library.find({$and:[{"name":"java"},{"desc":"fake book"}]})
+[
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ }
+]
+ass10> db.library.find({$or:[{"name":"java"},{"desc":"fake book"}]})
+[
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ }
+]
+ass10> db.library.find({$or:[{"name":"java"},{"name":"Python3.7"}]})
+[
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ }
+]
+ass10> db.library.insert({"bid":4,"name":"my story","cost":500});
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne, 
+insertMany, or bulkWrite.
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("65192b1e1890f8d9ebe31230") }
+}
+ass10> db.library.find();
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ },
+ {
+ _id: ObjectId("65192b1e1890f8d9ebe31230"),
+ bid: 4,
+ name: 'my story',
+ cost: 500
+ }
+]
+ass10> db.library.insert({"bid":4,"name":"my story","cost":800});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("65192b3c1890f8d9ebe31231") }
+}
+ass10> db.library.insert({"bid":4,"name":"my story2.0","cost":800});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("65192b4a1890f8d9ebe31232") }
+}
+ass10> db.library.insert({"bid":4,"name":"my story beta 
+version","cost":800});
+{
+ acknowledged: true,
+ insertedIds: { '0': ObjectId("65192b551890f8d9ebe31233") }
+}
+ass10> db.library.find();
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ },
+ {
+ _id: ObjectId("65192b1e1890f8d9ebe31230"),
+ bid: 4,
+ name: 'my story',
+ cost: 500
+ },
+ {
+ _id: ObjectId("65192b3c1890f8d9ebe31231"),
+ bid: 4,
+ name: 'my story',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b4a1890f8d9ebe31232"),
+ bid: 4,
+ name: 'my story2.0',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b551890f8d9ebe31233"),
+ bid: 4,
+ name: 'my story beta version',
+ cost: 800
+ }
+]
+ass10> db.library.find({"cost":{$gte:100}})
+[
+ {
+ _id: ObjectId("65192b1e1890f8d9ebe31230"),
+ bid: 4,
+ name: 'my story',
+ cost: 500
+ },
+ {
+ _id: ObjectId("65192b3c1890f8d9ebe31231"),
+ bid: 4,
+ name: 'my story',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b4a1890f8d9ebe31232"),
+ bid: 4,
+ name: 'my story2.0',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b551890f8d9ebe31233"),
+ bid: 4,
+ name: 'my story beta version',
+ cost: 800
+ }
+]
+ass10> db.library.find({"cost":{$gte:500}})
+[
+ {
+ _id: ObjectId("65192b1e1890f8d9ebe31230"),
+ bid: 4,
+ name: 'my story',
+ cost: 500
+ },
+ {
+ _id: ObjectId("65192b3c1890f8d9ebe31231"),
+ bid: 4,
+ name: 'my story',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b4a1890f8d9ebe31232"),
+ bid: 4,
+ name: 'my story2.0',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b551890f8d9ebe31233"),
+ bid: 4,
+ name: 'my story beta version',
+ cost: 800
+ }
+]
+ass10> db.library.find({"cost":{$gte:600}})
+[
+ {
+ _id: ObjectId("65192b3c1890f8d9ebe31231"),
+ bid: 4,
+ name: 'my story',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b4a1890f8d9ebe31232"),
+ bid: 4,
+ name: 'my story2.0',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b551890f8d9ebe31233"),
+ bid: 4,
+ name: 'my story beta version',
+ cost: 800
+ }
+]
+ass10> db.library.find({"cost":{$in:[100,200,500]}})
+[
+ {
+ _id: ObjectId("65192b1e1890f8d9ebe31230"),
+ bid: 4,
+ name: 'my story',
+ cost: 500
+ }
+]
+ass10> db.library.find({"cost":{$nin:[100,200,500]}})
+[
+ { _id: ObjectId("65191fc147ff05b0c6ab524f") },
+ { _id: ObjectId("6519201947ff05b0c6ab5251"), bid: 2, name: 'java' },
+ {
+ _id: ObjectId("6519204047ff05b0c6ab5252"),
+ bid: 3,
+ name: 'Python3.7'
+ },
+ {
+ _id: ObjectId("6519224647ff05b0c6ab5253"),
+ bid: 4,
+ name: 'java',
+ desc: 'fake book'
+ },
+ {
+ _id: ObjectId("65192b3c1890f8d9ebe31231"),
+ bid: 4,
+ name: 'my story',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b4a1890f8d9ebe31232"),
+ bid: 4,
+ name: 'my story2.0',
+ cost: 800
+ },
+ {
+ _id: ObjectId("65192b551890f8d9ebe31233"),
+ bid: 4,
+ name: 'my story beta version',
+ cost: 800
+ }
