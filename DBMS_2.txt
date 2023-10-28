@@ -1,0 +1,158 @@
+Design at least 10 SQL queries for suitable database application using SQL DML 
+statements: all types of Joins, Sub-Query and View 
+SQL> CREATE TABLE name(roll_no INT NOT NULL, name VARCHAR(30) NOT 
+NULL,PRIMARY KEY (roll_no));
+Table created.
+SQL> INSERT INTO name VALUES(37 ,'INDRANEEL');
+1 row created.
+SQL> INSERT INTO name VALUES (38 ,'SHUBHAM');
+1 row created.
+SQL> INSERT INTO name VALUES (39 ,'AKSHAY');
+1 row created.
+SQL> INSERT INTO name VALUES (40 ,'SAKSHI');
+1 row created.
+SQL> INSERT INTO name VALUES (41 ,'KETAN');
+1 row created.
+SQL> SELECT * FROM name;
+ ROLL_NO NAME
+---------- ------------------------------
+ 37 INDRANEEL
+ 38 SHUBHAM
+ 39 AKSHAY
+ 40 SAKSHI
+ 41 KETAN
+SQL> CREATE TABLE submission(sr_no INT NOT NULL, assgn_id 
+VARCHAR(30),roll_no INT NOT NULL,PRIMARY KEY(sr_no));
+Table created.
+SQL> INSERT INTO submission VALUES (1,’YYYY’,37);
+1 row created.
+SQL> INSERT INTO submission VALUES (2,’YXYY’,37);
+1 row created.
+SQL> INSERT INTO submission VALUES (3,’YXYY’,38);
+1 row created.
+SQL> INSERT INTO submission VALUES (4,'YXYY’,39);
+1 row created.
+SQL> SELECT * FROM submission;
+ SR_NO ASSGN_ID ROLL_NO
+---------- ------------------------------ ----------
+ 1 YYYY 37
+ 2 YXYY 37
+ 3 YXYY 38
+ 4 YXYY 39
+SQL> ALTER TABLE submission ADD FOREIGN KEY (roll_no) REFERENCES 
+name(roll_no);
+Table altered.
+SQL> desc submission
+Name Null? Type
+----------------------------------------- -------- -----------------------
+-----
+SR_NO NOT NULL NUMBER (38)
+ASSGN_ID VARCHAR2(30)
+ROLL_NO NOT NULL NUMBER (38)
+SQL> SELECT * FROM name, submission WHERE name.roll_no=submission.roll_no;
+ROLL_NO NAME SR_NO ASSGN_ID ROLL_NO
+----------- ----------------------- ----------- ----------- ----------
+ 37 INDRANEEL 1 YYYY 37
+ 37 INDRANEEL 2 YXYY 37
+ 38 SHUBHAM 3 YXYY 38
+ 39 AKSHAY 4 YXYY 39
+SQL> SELECT * FROM name JOIN submission ON name.roll_no=submission.roll_no;
+ ROLL_NO NAME SR_NO ASSGN_ID ROLL_NO
+----------- ----------------------- ----------- ----------- ----------
+ 37 INDRANEEL 1 YYYY 37
+ 37 INDRANEEL 2 YXYY 37
+ 38 SHUBHAM 3 YXYY 38
+ 39 AKSHAY 4 YXYY 39
+SQL> SELECT name.roll_no, name, assgn_id FROM name INNER JOIN submission ON 
+name.roll_no = submission.roll_no;
+ ROLL_NO NAME ASSGN_ID
+---------- ------------------------------ ------------------------------
+ 37 INDRANEEL YYYY
+ 37 INDRANEEL YXYY
+ 38 SHUBHAM YXYY
+ 39 AKSHAY YXYY
+SQL> SELECT * FROM name LEFT JOIN submission ON 
+name.roll_no=submission.roll_no;
+ ROLL_NO NAME SR_NO
+---------- ------------------------------ ----------
+ASSGN_ID ROLL_NO
+------------------------------ ----------
+ 37 INDRANEEL 1
+YYYY 37
+ 37 INDRANEEL 2
+YXYY 37
+ 38 SHUBHAM 3
+YXYY 38
+ ROLL_NO NAME SR_NO
+---------- ------------------------------ ----------
+ASSGN_ID ROLL_NO
+------------------------------ ----------
+ 39 AKSHAY 4
+YXYY 39
+ 40 SAKSHI
+ 41 KETAN
+6 rows selected.
+SQL> SELECT name.roll_no, submission.assgn_id
+ 2 FROM name
+ 3 LEFT JOIN submission ON name.roll_no = submission.roll_no;
+ ROLL_NO ASSGN_ID
+---------- ------------------------------
+ 37 YYYY
+ 37 YXYY
+ 38 YXYY
+ 39 YXYY
+ 40
+ 41
+6 rows selected.
+SQL>
+SQL> SELECT * FROM name RIGHT JOIN submission ON 
+name.roll_no=submission.roll_no;
+ ROLL_NO NAME SR_NO
+---------- ------------------------------ ----------
+ASSGN_ID ROLL_NO
+------------------------------ ----------
+ 37 INDRANEEL 1
+YYYY 37
+ 37 INDRANEEL 2
+YXYY 37
+ 38 SHUBHAM 3
+YXYY 38
+ ROLL_NO NAME SR_NO
+---------- ------------------------------ ----------
+ASSGN_ID ROLL_NO
+------------------------------ ----------
+ 39 AKSHAY 4
+YXYY 39
+SQL> CREATE TABLE a3_info(roll_no INT NOT NULL, name VARCHAR(30),cs_lang 
+VARCHAR(30),PRIMARY KEY (roll_no));
+Table created.
+SQL> INSERT INTO a3_info VALUES(37,'INDRANEEL','SQL');
+1 row created.
+SQL> INSERT INTO a3_info VALUES(40,'SAKSHI','C++');
+1 row created.
+SQL> INSERT INTO a3_info VALUES(38,'SHUBHAM','PYTHON');
+1 row created.
+SQL> INSERT INTO a3_info VALUES(39,'AKSHAY','JAVA');
+1 row created.
+SQL> INSERT INTO a3_info VALUES(41,'KETAN','REACT');
+1 row created.
+SQL> SELECT * FROM a3_info;
+ ROLL_NO NAME CS_LANG
+---------- ------------------------------ ------------------------------
+ 37 INDRANEEL SQL
+ 40 SAKSHI C++
+ 38 SHUBHAM PYTHON
+ 39 AKSHAY JAVA
+ 41 KETAN REACT
+SQL> CREATE VIEW temp AS SELECT roll_no , cs_lang FROM a3_info;
+View created.
+SQL> SELECT * FROM temp;
+ ROLL_NO CS_LANG
+---------- ------------------------------
+ 37 SQL
+ 40 C++
+ 38 PYTHON
+ 39 JAVA
+ 41 REACT
+SQL> UPDATE temp SET cs_lang='ANGULAR' WHERE roll_no=41;
+1 row updated
